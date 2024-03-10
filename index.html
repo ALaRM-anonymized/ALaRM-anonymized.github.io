@@ -76,10 +76,10 @@
             We introduce <span class="dnerf">ALaRM</span>, the first framework modeling hierarchical rewards in reinforcement learning from human feedback (RLHF), which is designed to enhance the alignment of large language models (LLMs) with human preferences.
           </p>
           <p>
-            The framework addresses the limitations of current alignment approaches, which often struggle with the inconsistency and sparsity of human supervision signals, by integrating holistic rewards with aspect-specific rewards. This integration enables more precise and consistent guidance of language models towards desired outcomes, particularly in complex and open text generation tasks. By employing a methodology that filters and combines multiple rewards based on their consistency, the framework provides a robust mechanism for improving model alignment.
+            The framework addresses the limitations of current alignment approaches, which often struggle with the inconsistency and sparsity of human supervision signals, by integrating holistic rewards with aspect-specific rewards. This integration enables more precise and consistent guidance of language models towards desired outcomes, particularly in complex and open text generation tasks. By employing a methodology that filters and combines multiple rewards based on their consistency, the framework provides a reliable mechanism for improving model alignment.
           </p>
           <p>
-            We validate our approach through applications in long-form question answering and machine translation tasks, employing <i>gpt-3.5-turbo-1106</i> for pair-wise comparisons, and demonstrate significant improvements over existing baselines. Our work underscores the effectiveness of hierarchical rewards modeling in refining LLM training processes for better preference alignment.
+            We validate our approach through applications in long-form question answering and machine translation tasks, employing <i>gpt-3.5-turbo</i> for pairwise comparisons, and demonstrate improvements over existing baselines. Our work underscores the effectiveness of hierarchical rewards modeling in refining LLM training processes for better human preference alignment.
           </p>
         </div>
       </div>
@@ -98,10 +98,10 @@
         <div class="content has-text-justified">
           <img src="static/images/training_signals.svg">
           <p>
-            Human oversight capabilities are finite. Human-written demonstrations and human preferences over two or more answers become more diffcult due to rapidly growing LLMs. We ask, <b>how to get reliable and scalable supervision signals within limited human oversight capabilities?</b>
+            Human oversight capabilities are finite. Demonstrations or preferences get noisy when tasks become complicated. We ask, <b>how to get reliable and scalable supervision signals within limited human oversight capabilities?</b>
           </p>
           <p>
-            As shown in this figure, the pretrained policies are first supervised fine-tuned on human-written demonstrations and then trained through RLHF given a holistic reward learned from human-ranked comparisons. The shadowed "noisy" area better aligns with human preference, which is hard to reach for solely a noisy holistic reward. We propose to utilize multiple rewards hierarchically for more accurate and consistent supervision signals and thus guide the policies into the noisy area.
+            As shown in this figure, the shadowed "superior area" better aligns with human preference, which is hard to reach for solely a noisy holistic reward. We propose to utilize multiple rewards hierarchically for more accurate and consistent supervision signals.
           </p>
         </div>
       </div>
@@ -115,31 +115,52 @@
     <!-- Long-form QA -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Main Results</h2>
-        <div class="content has-text-justified">
-          <p>
-            In this paper, we conduct all experiments using three different seeds, and the results are averaged across these three independent runs. In both long-form question answering and machine translation, we can see <span class="dnerf">ALaRM</span> holds the best under all three different metrics, which proves that <span class="dnerf">ALaRM</span> provides a stronger supervision signal than other methods.
-          </p>
-          <p>
-            <b>Holistc Reward</b>: <a href="https://huggingface.co/openbmb/UltraRM-13b">UltraRM-13B</a>
-            <br>
-            <b>Aspect-specific Rewards</b>: Factuality for Long-form QA; Grammar Reward by <a href="https://github.com/languagetool-org/languagetool">LanguageTool</a> for MT
-            <br>
-          </p>
-          <img src="static/images/long-form-QA-win-rate.png">
-          <img src="static/images/MT-win-rate.png">
-          <br><br>
-          <p>
-            Following tables shows the evaluation results on the test set of the mean values of each reward. We can see that <span class="dnerf">ALaRM</span> leads to significantly higher holistic reward than other methods, meanwhile presenting a comparable factuality rate/grammar error rate.
-          </p>
-        </div>
+        <h2 class="title is-3">Task: Long-form Question Answering</h2>
       </div>
     </div>
 
     <div class="columns is-centered">
       <div class="column is-two-fifths">
         <div class="content">
+          <img src="static/images/long-form-QA-reward-selection.png">
+        </div>
+      </div>
+      <div class="column is-two-fifths">
+        <div class="content">
           <img src="static/images/long-form-QA-mean.png">
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <div class="content has-text-justified">
+          <p>
+            <li>Through proactive reward selection, we choose the factuality reward for Long-form QA.</li>
+            <li>Results show that <span class="dnerf">ALaRM</span> holds the best in both mean rewards and pairwise comparisons.</li>
+          </p>
+
+          <img src="static/images/long-form-QA-win-rate.png">
+        </div>
+      </div>
+    </div>
+    <!--/ Long-form QA -->
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- MT -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Task: Machine Translation</h2>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-two-fifths">
+        <div class="content">
+          <img src="static/images/MT-reward-selection.png">
         </div>
       </div>
       <div class="column is-two-fifths">
@@ -148,7 +169,43 @@
         </div>
       </div>
     </div>
-    <!--/ Long-form QA -->
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <div class="content has-text-justified">
+          <p>
+            <li>The same as in long-form QA, we choose the grammar reward by the results of reward selection.</li>
+            <li>Again, <span class="dnerf">ALaRM</span> wins in pairwise comparisons and presents leading performance in mean rewards.</li>
+          </p>
+
+          <img src="static/images/MT-win-rate.png">
+        </div>
+      </div>
+    </div>
+    <!--/ MT -->
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Ablation Study. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Ablation Study</h2>
+        <div class="content has-text-justified">
+          <div style="text-align: center;">
+            <img src="static/images/ablation.png" width="60%">
+          </div>
+          <p>
+            While the main results should support the significance of <b>Combination</b> and <b>Hierarchical Structure</b>, we conduct extensive experiments to find out how <b>Reward Selection</b> affects <span class="dnerf">ALaRM</span>.
+          </p>
+          <p>
+            As shown in the table, the proactively selected rewards present leading performance evaluated by both the holistic reward and <i>gpt-3.5-turbo</i>, demonstrating the effectiveness of <b>Reward Selection</b>.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Ablation Study. -->
   </div>
 </section>
 
